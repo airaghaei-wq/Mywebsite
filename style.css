@@ -592,31 +592,63 @@ a {
 @media (max-width: 850px) {
 
     .header-inner {
-        flex-wrap: wrap;
-        padding: 13px 0;
+        min-height: auto;
+        padding: 12px 0;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
     }
 
     .logo {
-        flex: 1;
+        min-width: 0;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 7px;
     }
 
     .nav {
-    order: 3;
-    width: 100%;
-    display: flex;
-    gap: 8px;
+        grid-column: 1 / -1;
+        width: 100%;
 
-    overflow-x: auto;
-    overflow-y: hidden;
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
 
-    padding: 5px 2px 8px;
+        overflow-x: auto;
+        overflow-y: hidden;
 
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-}
+        padding: 4px 2px 8px;
 
-.nav::-webkit-scrollbar {
-    display: none;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .nav-btn {
+        flex: 0 0 auto;
+
+        min-width: 65px;
+        height: 42px;
+
+        padding: 8px 16px;
+
+        white-space: nowrap;
+        font-size: 14px;
+        border-radius: 12px;
+    }
+
+    .hero-section {
+        grid-template-columns: 1fr;
+    }
+
+    .news-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 .nav-btn {
