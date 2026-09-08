@@ -10,8 +10,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
-          rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
 
     <link rel="stylesheet" href="style.css">
 
@@ -49,6 +51,7 @@
 
 
 <div class="news-breaking">
+
     <div class="news-breaking-title">
         🔴 آخرین اخبار
     </div>
@@ -56,25 +59,46 @@
     <div class="news-breaking-text">
         مهم‌ترین اخبار ایران و جهان را در امیرنیوز دنبال کنید
     </div>
+
 </div>
 
 
 <main class="professional-news-page">
 
+    <!-- Loading -->
+
     <div id="newsLoading" class="professional-loading">
+
         <div class="loading-spinner"></div>
-        <p>در حال دریافت خبر...</p>
+
+        <p>
+            در حال دریافت خبر...
+        </p>
+
     </div>
 
 
-    <div id="newsError" class="professional-error" style="display:none;">
+    <!-- Error -->
+
+    <div
+        id="newsError"
+        class="professional-error"
+        style="display:none;"
+    >
         ❌ خبر پیدا نشد.
     </div>
 
 
-    <article id="newsArticle" class="professional-news" style="display:none;">
+    <!-- Article -->
 
-        <!-- مسیر خبر -->
+    <article
+        id="newsArticle"
+        class="professional-news"
+        style="display:none;"
+    >
+
+        <!-- Breadcrumb -->
+
         <div class="news-breadcrumb">
 
             <a href="index.html">
@@ -90,23 +114,27 @@
         </div>
 
 
-        <!-- دسته‌بندی -->
-        <div class="professional-category" id="newsCategory">
+        <!-- Category -->
+
+        <div
+            class="professional-category"
+            id="newsCategory"
+        >
             خبر
         </div>
 
 
-        <!-- تیتر -->
-        <h1 id="newsTitle" class="professional-title">
+        <!-- Title -->
+
+        <h1
+            id="newsTitle"
+            class="professional-title"
+        >
         </h1>
 
 
-        <!-- توضیح کوتاه -->
-        <p id="newsLead" class="professional-lead">
-        </p>
+        <!-- Meta -->
 
-
-        <!-- اطلاعات خبر -->
         <div class="professional-meta">
 
             <div>
@@ -122,26 +150,36 @@
         </div>
 
 
-        <!-- تصویر اصلی -->
+        <!-- Main Image -->
+
         <div class="professional-image-container">
 
-            <img id="newsImage"
-                 class="professional-main-image"
-                 style="display:none;"
-                 alt="">
+            <img
+                id="newsImage"
+                class="professional-main-image"
+                style="display:none;"
+                alt=""
+            >
 
         </div>
 
 
-        <!-- متن خبر -->
-        <div id="newsContent" class="professional-content">
+        <!-- Full News Content -->
+
+        <div
+            id="newsContent"
+            class="professional-content"
+        >
         </div>
 
 
-        <!-- اشتراک گذاری -->
+        <!-- Share -->
+
         <div class="news-share">
 
-            <strong>اشتراک‌گذاری خبر</strong>
+            <strong>
+                اشتراک‌گذاری خبر
+            </strong>
 
             <button onclick="copyNewsLink()">
                 🔗 کپی لینک
@@ -150,12 +188,17 @@
         </div>
 
 
-        <!-- خط جداکننده -->
+        <!-- Separator -->
+
         <div class="news-separator"></div>
 
 
-        <!-- بازگشت -->
-        <a href="index.html" class="back-to-news">
+        <!-- Back -->
+
+        <a
+            href="index.html"
+            class="back-to-news"
+        >
             ← بازگشت به آخرین اخبار
         </a>
 
@@ -187,121 +230,198 @@
 
 document.addEventListener("DOMContentLoaded", async () => {
 
-    const params = new URLSearchParams(window.location.search);
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
 
-    const id = params.get("id");
+    const id =
+        params.get("id");
 
-    const loading = document.getElementById("newsLoading");
-    const article = document.getElementById("newsArticle");
-    const error = document.getElementById("newsError");
+
+    const loading =
+        document.getElementById(
+            "newsLoading"
+        );
+
+    const article =
+        document.getElementById(
+            "newsArticle"
+        );
+
+    const error =
+        document.getElementById(
+            "newsError"
+        );
+
+
+    // اگر شناسه خبر وجود نداشت
 
     if (!id) {
 
         loading.style.display = "none";
+
         error.style.display = "block";
 
         return;
     }
 
 
-    const { data, error: dbError } = await supabaseClient
+    // دریافت خبر از Supabase
+
+    const {
+        data,
+        error: dbError
+    } = await supabaseClient
+
         .from("news")
+
         .select("*")
+
         .eq("id", id)
+
         .single();
 
 
+    // اگر خبر پیدا نشد
+
     if (dbError || !data) {
 
-        console.error(dbError);
+        console.error(
+            "SUPABASE ERROR:",
+            dbError
+        );
 
         loading.style.display = "none";
+
         error.style.display = "block";
 
         return;
     }
 
 
-    document.title = data.title + " | امیرنیوز";
+    // عنوان صفحه
+
+    document.title =
+        data.title + " | امیرنیوز";
 
 
-    document.getElementById("newsTitle").textContent =
+    // عنوان خبر
+
+    document.getElementById(
+        "newsTitle"
+    ).textContent =
         data.title;
 
 
-    document.getElementById("newsCategory").textContent =
+    // دسته‌بندی
+
+    document.getElementById(
+        "newsCategory"
+    ).textContent =
         data.category;
 
 
-    document.getElementById("breadcrumbCategory").textContent =
+    document.getElementById(
+        "breadcrumbCategory"
+    ).textContent =
         data.category;
 
 
-    document.getElementById("newsContent").textContent =
+    // متن کامل خبر
+    // فقط یک بار نمایش داده می‌شود
+
+    document.getElementById(
+        "newsContent"
+    ).textContent =
         data.content;
 
 
-    /*
-      ساخت لید کوتاه از ابتدای متن خبر
-    */
+    // تاریخ
 
-    const leadText = data.content.length > 180
-        ? data.content.substring(0, 180) + "..."
-        : data.content;
-
-    document.getElementById("newsLead").textContent =
-        leadText;
+    const date =
+        new Date(data.created_at);
 
 
-    /*
-      تاریخ
-    */
-
-    const date = new Date(data.created_at);
-
-    document.getElementById("newsDate").textContent =
-        date.toLocaleString("fa-IR");
+    document.getElementById(
+        "newsDate"
+    ).textContent =
+        date.toLocaleString(
+            "fa-IR"
+        );
 
 
-    /*
-      تصویر
-    */
+    // تصویر
 
     if (data.image) {
 
         const image =
-            document.getElementById("newsImage");
+            document.getElementById(
+                "newsImage"
+            );
 
-        image.src = data.image;
+        image.src =
+            data.image;
 
-        image.alt = data.title;
+        image.alt =
+            data.title;
 
-        image.style.display = "block";
+        image.style.display =
+            "block";
+
+
+        // اگر تصویر خراب بود
+
+        image.onerror = () => {
+
+            image.style.display =
+                "none";
+
+        };
+
     }
 
 
-    loading.style.display = "none";
+    // نمایش مقاله
 
-    article.style.display = "block";
+    loading.style.display =
+        "none";
+
+    article.style.display =
+        "block";
 
 });
 
 
 /*
-  کپی لینک خبر
+    کپی لینک خبر
 */
 
 function copyNewsLink() {
 
-    navigator.clipboard.writeText(
-        window.location.href
-    );
+    navigator.clipboard
+        .writeText(
+            window.location.href
+        )
+        .then(() => {
 
-    alert("✅ لینک خبر کپی شد!");
+            alert(
+                "✅ لینک خبر کپی شد!"
+            );
+
+        })
+        .catch(() => {
+
+            alert(
+                "❌ کپی لینک انجام نشد."
+            );
+
+        });
 
 }
 
 </script>
 
 </body>
+
 </html>
