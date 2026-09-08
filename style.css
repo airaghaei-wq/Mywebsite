@@ -879,20 +879,16 @@ a {
 
 .professional-content {
     max-width: 850px;
-
+    width: 100%;
     margin: auto;
-
     font-size: 19px;
     line-height: 2.25;
-
-    color: #252525;
+    color: var(--text);
 
     white-space: pre-line;
-}
 
-.professional-content::first-letter {
-    font-size: 45px;
-    font-weight: 900;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 
