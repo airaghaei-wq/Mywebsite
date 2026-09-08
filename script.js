@@ -144,18 +144,21 @@ function renderSide(news) {
                 onerror="this.src='https://placehold.co/300x200?text=News'"
             >
 
-            <div>
-                <span class="category">
-                    ${escapeHtml(item.category)}
-                </span>
+card.innerHTML = `
+    <a href="news.html?id=${news.id}" class="news-card-link">
+        <img src="${news.image || ''}" alt="${news.title}">
+        
+        <div class="news-card-content">
+            <span class="news-card-category">
+                ${news.category}
+            </span>
 
-                <h3>${escapeHtml(item.title)}</h3>
+            <h3>${news.title}</h3>
 
-                <div class="meta">
-                    ${formatDate(item.created_at)}
-                </div>
-            </div>
-        `;
+            <p>${news.content}</p>
+        </div>
+    </a>
+`;
 
         container.appendChild(card);
     });
