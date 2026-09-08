@@ -4,7 +4,7 @@
 
 const SUPABASE_URL = "https://vyegcyyncmqzhcvsyhbi.supabase.co";
 
-// کلید Publishable خودت را اینجا قرار بده
+// Publishable Key
 const SUPABASE_KEY = "sb_publishable_zUugzOxldDhjgZwenwZ3BQ_tSLjYTjb";
 
 const supabaseClient = window.supabase.createClient(
@@ -20,6 +20,11 @@ const supabaseClient = window.supabase.createClient(
 let allNews = [];
 let currentCategory = "همه";
 
+
+// ==========================================
+// دریافت خبرها
+// ==========================================
+
 async function loadNews() {
 
     const { data, error } = await supabaseClient
@@ -28,11 +33,13 @@ async function loadNews() {
         .order("created_at", { ascending: false });
 
     if (error) {
-        console.error(error);
+
+        console.error("SUPABASE ERROR:", error);
 
         const grid = document.getElementById("newsGrid");
 
         if (grid) {
+
             grid.innerHTML = `
                 <div class="empty-state">
                     <div>⚠️</div>
@@ -51,147 +58,260 @@ async function loadNews() {
 }
 
 
+// ==========================================
+// نمایش صفحه اصلی
+// ==========================================
+
 function renderHome() {
 
-    if (!document.getElementById("newsGrid")) return;
+    if (!document.getElementById("newsGrid")) {
+        return;
+    }
 
     let filtered = [...allNews];
 
+
+    // دسته‌بندی
+
     if (currentCategory !== "همه") {
+
         filtered = filtered.filter(
             news => news.category === currentCategory
         );
     }
 
-    const searchInput = document.getElementById("searchInput");
+
+    // جستجو
+
+    const searchInput =
+        document.getElementById("searchInput");
 
     if (searchInput && searchInput.value.trim()) {
 
-        const query = searchInput.value.trim().toLowerCase();
+        const query =
+            searchInput.value.trim().toLowerCase();
 
         filtered = filtered.filter(news =>
-            news.title.toLowerCase().includes(query) ||
-            news.content.toLowerCase().includes(query)
+
+            (news.title || "")
+                .toLowerCase()
+                .includes(query)
+
+            ||
+
+            (news.content || "")
+                .toLowerCase()
+                .includes(query)
         );
     }
+
 
     renderHero(filtered);
     renderSide(filtered);
     renderGrid(filtered);
 
-    const breaking = document.getElementById("breakingText");
+
+    // خبر فوری
+
+    const breaking =
+        document.getElementById("breakingText");
 
     if (breaking && allNews.length) {
-        breaking.textContent = allNews[0].title;
+
+        breaking.textContent =
+            allNews[0].title;
     }
 }
 
 
+// ==========================================
+// خبر اصلی
+// ==========================================
+
 function renderHero(news) {
 
-    const hero = document.getElementById("heroNews");
+    const hero =
+        document.getElementById("heroNews");
 
-    if (!hero) return;
-
-    if (!news.length) {
-        hero.innerHTML = `<div class="loading">خبری موجود نیست.</div>`;
+    if (!hero) {
         return;
     }
 
+
+    if (!news.length) {
+
+        hero.innerHTML = `
+            <div class="loading">
+                خبری موجود نیست.
+            </div>
+        `;
+
+        return;
+    }
+
+
     const item = news[0];
 
+
     hero.innerHTML = `
-        <img
-            class="hero-image"
-            src="${safeImage(item.image)}"
-            alt=""
-            onerror="this.src='https://placehold.co/1000x600?text=AmirNews'"
+
+        <a
+            href="news.html?id=${item.id}"
+            class="hero-link"
         >
 
-        <div class="hero-overlay">
+            <img
+                class="hero-image"
+                src="${safeImage(item.image)}"
+                alt="${escapeHtml(item.title)}"
+                onerror="
+                    this.src='https://placehold.co/1000x600?text=AmirNews'
+                "
+            >
 
-            <span class="category">${escapeHtml(item.category)}</span>
+            <div class="hero-overlay">
 
-            <h1>${escapeHtml(item.title)}</h1>
+                <span class="category">
+                    ${escapeHtml(item.category)}
+                </span>
 
-            <div class="meta">
-                ${formatDate(item.created_at)}
+                <h1>
+                    ${escapeHtml(item.title)}
+                </h1>
+
+                <div class="meta">
+                    ${formatDate(item.created_at)}
+                </div>
+
             </div>
 
-        </div>
+        </a>
     `;
 }
 
 
+// ==========================================
+// خبرهای کناری
+// ==========================================
+
 function renderSide(news) {
 
-    const container = document.getElementById("sideNews");
+    const container =
+        document.getElementById("sideNews");
 
-    if (!container) return;
+    if (!container) {
+        return;
+    }
+
 
     container.innerHTML = "";
 
+
     news.slice(1, 4).forEach(item => {
 
-        const card = document.createElement("a");
+        const card =
+            document.createElement("a");
 
-        card.className = "side-card";
+
+        card.className =
+            "side-card";
+
+
+        card.href =
+            `news.html?id=${item.id}`;
+
 
         card.innerHTML = `
+
             <img
                 src="${safeImage(item.image)}"
-                alt=""
-                onerror="this.src='https://placehold.co/300x200?text=News'"
+                alt="${escapeHtml(item.title)}"
+                onerror="
+                    this.src='https://placehold.co/300x200?text=News'
+                "
             >
 
-card.innerHTML = `
-    <a href="news.html?id=${news.id}" class="news-card-link">
-        <img src="${news.image || ''}" alt="${news.title}">
-        
-        <div class="news-card-content">
-            <span class="news-card-category">
-                ${news.category}
-            </span>
+            <div>
 
-            <h3>${news.title}</h3>
+                <span class="category">
+                    ${escapeHtml(item.category)}
+                </span>
 
-            <p>${news.content}</p>
-        </div>
-    </a>
-`;
+                <h3>
+                    ${escapeHtml(item.title)}
+                </h3>
+
+                <div class="meta">
+                    ${formatDate(item.created_at)}
+                </div>
+
+            </div>
+
+        `;
+
 
         container.appendChild(card);
     });
 }
 
 
+// ==========================================
+// کارت‌های خبر
+// ==========================================
+
 function renderGrid(news) {
 
-    const grid = document.getElementById("newsGrid");
-    const empty = document.getElementById("emptyState");
+    const grid =
+        document.getElementById("newsGrid");
 
-    if (!grid) return;
+    const empty =
+        document.getElementById("emptyState");
 
-    grid.innerHTML = "";
 
-    if (!news.length) {
-        empty?.classList.remove("hidden");
+    if (!grid) {
         return;
     }
 
+
+    grid.innerHTML = "";
+
+
+    if (!news.length) {
+
+        empty?.classList.remove("hidden");
+
+        return;
+    }
+
+
     empty?.classList.add("hidden");
+
 
     news.forEach(item => {
 
-        const card = document.createElement("article");
 
-        card.className = "news-card";
+        // کارت به صورت لینک ساخته می‌شود
+
+        const card =
+            document.createElement("a");
+
+
+        card.className =
+            "news-card";
+
+
+        card.href =
+            `news.html?id=${item.id}`;
+
 
         card.innerHTML = `
+
             <img
                 src="${safeImage(item.image)}"
-                alt=""
-                onerror="this.src='https://placehold.co/600x400?text=AmirNews'"
+                alt="${escapeHtml(item.title)}"
+                onerror="
+                    this.src='https://placehold.co/600x400?text=AmirNews'
+                "
             >
 
             <div class="news-card-body">
@@ -213,46 +333,68 @@ function renderGrid(news) {
                 </div>
 
             </div>
+
         `;
 
+
         grid.appendChild(card);
+
     });
 }
 
 
 // ==========================================
-// دسته‌بندی
+// دسته‌بندی‌ها
 // ==========================================
 
-document.querySelectorAll(".nav-btn").forEach(button => {
+document
+    .querySelectorAll(".nav-btn")
+    .forEach(button => {
 
-    button.addEventListener("click", () => {
+        button.addEventListener("click", () => {
 
-        document.querySelectorAll(".nav-btn")
-            .forEach(btn => btn.classList.remove("active"));
 
-        button.classList.add("active");
+            document
+                .querySelectorAll(".nav-btn")
+                .forEach(btn => {
 
-        currentCategory = button.dataset.category;
+                    btn.classList.remove("active");
 
-        renderHome();
+                });
+
+
+            button.classList.add("active");
+
+
+            currentCategory =
+                button.dataset.category;
+
+
+            renderHome();
+
+        });
+
     });
-
-});
 
 
 // ==========================================
 // جستجو
 // ==========================================
 
-const searchInput = document.getElementById("searchInput");
+const searchInput =
+    document.getElementById("searchInput");
+
 
 if (searchInput) {
 
-    searchInput.addEventListener("input", () => {
-        renderHome();
-    });
+    searchInput.addEventListener(
+        "input",
+        () => {
 
+            renderHome();
+
+        }
+    );
 }
 
 
@@ -260,31 +402,46 @@ if (searchInput) {
 // Dark Mode
 // ==========================================
 
-const themeBtn = document.getElementById("themeBtn");
+const themeBtn =
+    document.getElementById("themeBtn");
+
 
 if (themeBtn) {
 
-    const savedTheme = localStorage.getItem("amirnews-theme");
+
+    const savedTheme =
+        localStorage.getItem("amirnews-theme");
+
 
     if (savedTheme === "dark") {
+
         document.body.classList.add("dark");
+
         themeBtn.textContent = "☀️";
     }
 
+
     themeBtn.addEventListener("click", () => {
+
 
         document.body.classList.toggle("dark");
 
+
         const dark =
             document.body.classList.contains("dark");
+
 
         localStorage.setItem(
             "amirnews-theme",
             dark ? "dark" : "light"
         );
 
-        themeBtn.textContent = dark ? "☀️" : "🌙";
+
+        themeBtn.textContent =
+            dark ? "☀️" : "🌙";
+
     });
+
 }
 
 
@@ -292,72 +449,130 @@ if (themeBtn) {
 // ADMIN LOGIN
 // ==========================================
 
-const loginForm = document.getElementById("loginForm");
+const loginForm =
+    document.getElementById("loginForm");
+
 
 if (loginForm) {
 
+
     checkAdminSession();
 
-    loginForm.addEventListener("submit", async event => {
 
-        event.preventDefault();
+    loginForm.addEventListener(
+        "submit",
+        async event => {
 
-        const email =
-            document.getElementById("email").value.trim();
 
-        const password =
-            document.getElementById("password").value;
+            event.preventDefault();
 
-        const message =
-            document.getElementById("loginMessage");
 
-        message.textContent = "در حال ورود...";
+            const email =
+                document
+                    .getElementById("email")
+                    .value
+                    .trim();
 
-        const { error } =
-            await supabaseClient.auth.signInWithPassword({
-                email,
-                password
-            });
 
-        if (error) {
+            const password =
+                document
+                    .getElementById("password")
+                    .value;
+
+
+            const message =
+                document.getElementById(
+                    "loginMessage"
+                );
+
 
             message.textContent =
-                "❌ ایمیل یا رمز عبور اشتباه است.";
+                "در حال ورود...";
 
-            return;
+
+            const { error } =
+                await supabaseClient.auth
+                    .signInWithPassword({
+                        email,
+                        password
+                    });
+
+
+            if (error) {
+
+                console.error(error);
+
+
+                message.textContent =
+                    "❌ ایمیل یا رمز عبور اشتباه است.";
+
+
+                return;
+            }
+
+
+            await checkAdminSession();
+
         }
-
-        await checkAdminSession();
-    });
+    );
 }
 
 
+// ==========================================
+// بررسی ادمین
+// ==========================================
+
 async function checkAdminSession() {
+
 
     const {
         data: { user }
-    } = await supabaseClient.auth.getUser();
+    } =
+        await supabaseClient.auth.getUser();
 
-    if (!user) return;
+
+    if (!user) {
+        return;
+    }
+
 
     const ADMIN_UID =
         "8c5d4c7d-0cb0-4ba1-ae06-2e30535a7df7";
 
+
     if (user.id !== ADMIN_UID) {
+
 
         await supabaseClient.auth.signOut();
 
-        document.getElementById("loginMessage").textContent =
-            "❌ این حساب اجازه ورود به پنل مدیریت را ندارد.";
+
+        const message =
+            document.getElementById(
+                "loginMessage"
+            );
+
+
+        if (message) {
+
+            message.textContent =
+                "❌ این حساب اجازه ورود به پنل مدیریت را ندارد.";
+
+        }
+
 
         return;
     }
 
-    document.getElementById("loginBox")
+
+    document
+        .getElementById("loginBox")
         ?.classList.add("hidden");
 
-    document.getElementById("dashboard")
+
+    document
+        .getElementById("dashboard")
         ?.classList.remove("hidden");
+
 
     loadAdminNews();
 }
@@ -367,244 +582,463 @@ async function checkAdminSession() {
 // LOGOUT
 // ==========================================
 
-const logoutBtn = document.getElementById("logoutBtn");
+const logoutBtn =
+    document.getElementById("logoutBtn");
+
 
 if (logoutBtn) {
 
-    logoutBtn.addEventListener("click", async () => {
 
-        await supabaseClient.auth.signOut();
+    logoutBtn.addEventListener(
+        "click",
+        async () => {
 
-        location.reload();
 
-    });
+            await supabaseClient.auth.signOut();
+
+
+            location.reload();
+
+        }
+    );
 }
 
 
 // ==========================================
-// ADMIN NEWS
+// ADMIN NEWS FORM
 // ==========================================
 
-const newsForm = document.getElementById("newsForm");
+const newsForm =
+    document.getElementById("newsForm");
+
 
 if (newsForm) {
 
-    newsForm.addEventListener("submit", async event => {
 
-        event.preventDefault();
+    newsForm.addEventListener(
+        "submit",
+        async event => {
 
-        const id =
-            document.getElementById("newsId").value;
 
-        const title =
-            document.getElementById("newsTitle").value.trim();
+            event.preventDefault();
 
-        const category =
-            document.getElementById("newsCategory").value;
 
-        const content =
-            document.getElementById("newsContent").value.trim();
+            const id =
+                document
+                    .getElementById("newsId")
+                    .value;
 
-        const image =
-            document.getElementById("newsImage").value.trim();
 
-        const message =
-            document.getElementById("newsMessage");
+            const title =
+                document
+                    .getElementById("newsTitle")
+                    .value
+                    .trim();
 
-        message.textContent = "در حال ذخیره...";
 
-        let result;
+            const category =
+                document
+                    .getElementById("newsCategory")
+                    .value;
 
-        if (id) {
 
-            result = await supabaseClient
-                .from("news")
-                .update({
-                    title,
-                    category,
-                    content,
-                    image: image || null
-                })
-                .eq("id", id);
+            const content =
+                document
+                    .getElementById("newsContent")
+                    .value
+                    .trim();
 
-        } else {
 
-            result = await supabaseClient
-                .from("news")
-                .insert({
-                    title,
-                    category,
-                    content,
-                    image: image || null
-                });
+            const image =
+                document
+                    .getElementById("newsImage")
+                    .value
+                    .trim();
+
+
+            const message =
+                document.getElementById(
+                    "newsMessage"
+                );
+
+
+            message.textContent =
+                "در حال ذخیره...";
+
+
+            let result;
+
+
+            // ویرایش
+
+            if (id) {
+
+
+                result =
+                    await supabaseClient
+                        .from("news")
+                        .update({
+
+                            title,
+                            category,
+                            content,
+                            image: image || null
+
+                        })
+                        .eq("id", id);
+
+
+            }
+
+            // ایجاد خبر جدید
+
+            else {
+
+
+                result =
+                    await supabaseClient
+                        .from("news")
+                        .insert({
+
+                            title,
+                            category,
+                            content,
+                            image: image || null
+
+                        });
+
+            }
+
+
+            if (result.error) {
+
+
+                console.error(
+                    "SUPABASE ERROR:",
+                    result.error
+                );
+
+
+                message.textContent =
+                    "❌ " +
+                    result.error.message;
+
+
+                return;
+            }
+
+
+            message.textContent =
+                id
+                    ? "✅ خبر ویرایش شد."
+                    : "✅ خبر منتشر شد.";
+
+
+            resetNewsForm();
+
+
+            loadAdminNews();
+
         }
-
-        if (result.error) {
-
-    console.error("SUPABASE ERROR:", result.error);
-
-    message.textContent =
-        "❌ " + result.error.message;
-
-    return;
-}
-        message.textContent =
-            id ? "✅ خبر ویرایش شد." : "✅ خبر منتشر شد.";
-
-        resetNewsForm();
-
-        loadAdminNews();
-    });
+    );
 }
 
+
+// ==========================================
+// دریافت خبرهای پنل ادمین
+// ==========================================
 
 async function loadAdminNews() {
 
+
     const list =
-        document.getElementById("adminNewsList");
+        document.getElementById(
+            "adminNewsList"
+        );
 
-    if (!list) return;
 
-    const { data, error } =
+    if (!list) {
+        return;
+    }
+
+
+    const {
+        data,
+        error
+    } =
         await supabaseClient
             .from("news")
             .select("*")
-            .order("created_at", { ascending: false });
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
 
     if (error) {
+
+
+        console.error(error);
+
 
         list.innerHTML =
             "❌ خطا در دریافت خبرها.";
 
+
         return;
     }
+
 
     if (!data.length) {
 
+
         list.innerHTML =
-            `<p class="meta">هنوز خبری منتشر نکرده‌ای.</p>`;
+            `
+            <p class="meta">
+                هنوز خبری منتشر نکرده‌ای.
+            </p>
+            `;
+
 
         return;
     }
 
+
     list.innerHTML = "";
 
+
     data.forEach(item => {
+
 
         const row =
             document.createElement("div");
 
-        row.className = "admin-news-item";
+
+        row.className =
+            "admin-news-item";
+
 
         row.innerHTML = `
 
             <div>
-                <h3>${escapeHtml(item.title)}</h3>
+
+                <h3>
+                    ${escapeHtml(item.title)}
+                </h3>
 
                 <span class="meta">
+
                     ${escapeHtml(item.category)}
+
                     •
+
                     ${formatDate(item.created_at)}
+
                 </span>
+
             </div>
+
 
             <div class="admin-news-actions">
 
+
                 <button
                     class="edit-btn"
-                    onclick="editNews(${item.id})">
+                    onclick="editNews(${item.id})"
+                >
                     ✏️ ویرایش
                 </button>
 
+
                 <button
                     class="delete-btn"
-                    onclick="deleteNews(${item.id})">
+                    onclick="deleteNews(${item.id})"
+                >
                     🗑️ حذف
                 </button>
 
+
             </div>
+
         `;
 
+
         list.appendChild(row);
+
     });
 }
 
 
-window.editNews = async function(id) {
+// ==========================================
+// ویرایش خبر
+// ==========================================
 
-    const { data, error } =
-        await supabaseClient
-            .from("news")
-            .select("*")
-            .eq("id", id)
-            .single();
-
-    if (error || !data) {
-        alert("خبر پیدا نشد.");
-        return;
-    }
-
-    document.getElementById("newsId").value = data.id;
-    document.getElementById("newsTitle").value = data.title;
-    document.getElementById("newsCategory").value = data.category;
-    document.getElementById("newsContent").value = data.content;
-    document.getElementById("newsImage").value = data.image || "";
-
-    document.getElementById("formTitle").textContent =
-        "ویرایش خبر";
-
-    document.getElementById("cancelEdit")
-        ?.classList.remove("hidden");
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-};
+window.editNews =
+    async function(id) {
 
 
-window.deleteNews = async function(id) {
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("news")
+                .select("*")
+                .eq("id", id)
+                .single();
 
-    const confirmed =
-        confirm("مطمئنی می‌خواهی این خبر را حذف کنی؟");
 
-    if (!confirmed) return;
+        if (error || !data) {
 
-    const { error } =
-        await supabaseClient
-            .from("news")
-            .delete()
-            .eq("id", id);
 
-    if (error) {
+            alert("خبر پیدا نشد.");
 
-        alert("❌ حذف خبر انجام نشد.");
 
-        console.error(error);
+            return;
+        }
 
-        return;
-    }
 
-    loadAdminNews();
-};
+        document
+            .getElementById("newsId")
+            .value = data.id;
 
+
+        document
+            .getElementById("newsTitle")
+            .value = data.title;
+
+
+        document
+            .getElementById("newsCategory")
+            .value = data.category;
+
+
+        document
+            .getElementById("newsContent")
+            .value = data.content;
+
+
+        document
+            .getElementById("newsImage")
+            .value = data.image || "";
+
+
+        document
+            .getElementById("formTitle")
+            .textContent =
+            "ویرایش خبر";
+
+
+        document
+            .getElementById("cancelEdit")
+            ?.classList
+            .remove("hidden");
+
+
+        window.scrollTo({
+
+            top: 0,
+
+            behavior: "smooth"
+
+        });
+
+    };
+
+
+// ==========================================
+// حذف خبر
+// ==========================================
+
+window.deleteNews =
+    async function(id) {
+
+
+        const confirmed =
+            confirm(
+                "مطمئنی می‌خواهی این خبر را حذف کنی؟"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        const { error } =
+            await supabaseClient
+                .from("news")
+                .delete()
+                .eq("id", id);
+
+
+        if (error) {
+
+
+            alert(
+                "❌ حذف خبر انجام نشد."
+            );
+
+
+            console.error(error);
+
+
+            return;
+        }
+
+
+        loadAdminNews();
+
+    };
+
+
+// ==========================================
+// ریست فرم
+// ==========================================
 
 function resetNewsForm() {
 
-    document.getElementById("newsForm")?.reset();
 
-    document.getElementById("newsId").value = "";
+    document
+        .getElementById("newsForm")
+        ?.reset();
 
-    document.getElementById("formTitle").textContent =
-        "افزودن خبر جدید";
 
-    document.getElementById("cancelEdit")
-        ?.classList.add("hidden");
+    const id =
+        document.getElementById("newsId");
+
+
+    if (id) {
+        id.value = "";
+    }
+
+
+    const formTitle =
+        document.getElementById("formTitle");
+
+
+    if (formTitle) {
+
+        formTitle.textContent =
+            "افزودن خبر جدید";
+    }
+
+
+    document
+        .getElementById("cancelEdit")
+        ?.classList
+        .add("hidden");
 }
 
 
-document.getElementById("cancelEdit")
-    ?.addEventListener("click", resetNewsForm);
+document
+    .getElementById("cancelEdit")
+    ?.addEventListener(
+        "click",
+        resetNewsForm
+    );
 
 
 // ==========================================
@@ -613,7 +1047,11 @@ document.getElementById("cancelEdit")
 
 function formatDate(date) {
 
-    if (!date) return "";
+
+    if (!date) {
+        return "";
+    }
+
 
     return new Date(date).toLocaleDateString(
         "fa-IR",
@@ -628,9 +1066,12 @@ function formatDate(date) {
 
 function safeImage(url) {
 
+
     if (!url) {
+
         return "https://placehold.co/1000x600?text=AmirNews";
     }
+
 
     return url;
 }
@@ -638,9 +1079,15 @@ function safeImage(url) {
 
 function escapeHtml(text) {
 
-    if (text === null || text === undefined) {
+
+    if (
+        text === null ||
+        text === undefined
+    ) {
+
         return "";
     }
+
 
     return String(text)
         .replaceAll("&", "&amp;")
