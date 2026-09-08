@@ -438,14 +438,13 @@ if (newsForm) {
 
         if (result.error) {
 
-            console.error(result.error);
+    console.error("SUPABASE ERROR:", result.error);
 
-            message.textContent =
-                "❌ خطا در ذخیره خبر.";
+    message.textContent =
+        "❌ " + result.error.message;
 
-            return;
-        }
-
+    return;
+}
         message.textContent =
             id ? "✅ خبر ویرایش شد." : "✅ خبر منتشر شد.";
 
