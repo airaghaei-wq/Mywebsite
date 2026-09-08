@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>خبر | امیرنیوز</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</head>
+
+<body>
+
+<header class="news-header">
+
+    <div class="news-header-inner">
+
+        <a href="index.html" class="news-logo">
+            امیر<span>نیوز</span>
+        </a>
+
+        <nav class="news-nav">
+            <a href="index.html">خانه</a>
+            <a href="index.html?category=ایران">ایران</a>
+            <a href="index.html?category=جهان">جهان</a>
+            <a href="index.html?category=فناوری">فناوری</a>
+            <a href="index.html?category=اقتصاد">اقتصاد</a>
+            <a href="index.html?category=تاریخ">تاریخ</a>
+            <a href="index.html?category=ورزش">ورزش</a>
+        </nav>
+
+        <button id="darkModeBtn" class="news-dark-btn">
+            🌙
+        </button>
+
+    </div>
+
+</header>
+
+
+<div class="news-breaking">
+    <div class="news-breaking-title">
+        🔴 آخرین اخبار
+    </div>
+
+    <div class="news-breaking-text">
+        مهم‌ترین اخبار ایران و جهان را در امیرنیوز دنبال کنید
+    </div>
+</div>
+
+
+<main class="professional-news-page">
+
+    <div id="newsLoading" class="professional-loading">
+        <div class="loading-spinner"></div>
+        <p>در حال دریافت خبر...</p>
+    </div>
+
+
+    <div id="newsError" class="professional-error" style="display:none;">
+        ❌ خبر پیدا نشد.
+    </div>
+
+
+    <article id="newsArticle" class="professional-news" style="display:none;">
+
+        <!-- مسیر خبر -->
+        <div class="news-breadcrumb">
+
+            <a href="index.html">
+                صفحه اصلی
+            </a>
+
+            <span>›</span>
+
+            <span id="breadcrumbCategory">
+                خبر
+            </span>
+
+        </div>
+
+
+        <!-- دسته‌بندی -->
+        <div class="professional-category" id="newsCategory">
+            خبر
+        </div>
+
+
+        <!-- تیتر -->
+        <h1 id="newsTitle" class="professional-title">
+        </h1>
+
+
+        <!-- توضیح کوتاه -->
+        <p id="newsLead" class="professional-lead">
+        </p>
+
+
+        <!-- اطلاعات خبر -->
+        <div class="professional-meta">
+
+            <div>
+                🕐
+                <span id="newsDate"></span>
+            </div>
+
+            <div>
+                📰
+                امیرنیوز
+            </div>
+
+        </div>
+
+
+        <!-- تصویر اصلی -->
+        <div class="professional-image-container">
+
+            <img id="newsImage"
+                 class="professional-main-image"
+                 style="display:none;"
+                 alt="">
+
+        </div>
+
+
+        <!-- متن خبر -->
+        <div id="newsContent" class="professional-content">
+        </div>
+
+
+        <!-- اشتراک گذاری -->
+        <div class="news-share">
+
+            <strong>اشتراک‌گذاری خبر</strong>
+
+            <button onclick="copyNewsLink()">
+                🔗 کپی لینک
+            </button>
+
+        </div>
+
+
+        <!-- خط جداکننده -->
+        <div class="news-separator"></div>
+
+
+        <!-- بازگشت -->
+        <a href="index.html" class="back-to-news">
+            ← بازگشت به آخرین اخبار
+        </a>
+
+    </article>
+
+</main>
+
+
+<footer class="professional-footer">
+
+    <div class="footer-logo">
+        امیرنیوز
+    </div>
+
+    <p>
+        مرجع اخبار ایران و جهان
+    </p>
+
+    <div class="footer-line"></div>
+
+    <small>
+        © امیرنیوز — تمامی حقوق محفوظ است
+    </small>
+
+</footer>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+    const params = new URLSearchParams(window.location.search);
+
+    const id = params.get("id");
+
+    const loading = document.getElementById("newsLoading");
+    const article = document.getElementById("newsArticle");
+    const error = document.getElementById("newsError");
+
+    if (!id) {
+
+        loading.style.display = "none";
+        error.style.display = "block";
+
+        return;
+    }
+
+
+    const { data, error: dbError } = await supabaseClient
+        .from("news")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+
+    if (dbError || !data) {
+
+        console.error(dbError);
+
+        loading.style.display = "none";
+        error.style.display = "block";
+
+        return;
+    }
+
+
+    document.title = data.title + " | امیرنیوز";
+
+
+    document.getElementById("newsTitle").textContent =
+        data.title;
+
+
+    document.getElementById("newsCategory").textContent =
+        data.category;
+
+
+    document.getElementById("breadcrumbCategory").textContent =
+        data.category;
+
+
+    document.getElementById("newsContent").textContent =
+        data.content;
+
+
+    /*
+      ساخت لید کوتاه از ابتدای متن خبر
+    */
+
+    const leadText = data.content.length > 180
+        ? data.content.substring(0, 180) + "..."
+        : data.content;
+
+    document.getElementById("newsLead").textContent =
+        leadText;
+
+
+    /*
+      تاریخ
+    */
+
+    const date = new Date(data.created_at);
+
+    document.getElementById("newsDate").textContent =
+        date.toLocaleString("fa-IR");
+
+
+    /*
+      تصویر
+    */
+
+    if (data.image) {
+
+        const image =
+            document.getElementById("newsImage");
+
+        image.src = data.image;
+
+        image.alt = data.title;
+
+        image.style.display = "block";
+    }
+
+
+    loading.style.display = "none";
+
+    article.style.display = "block";
+
+});
+
+
+/*
+  کپی لینک خبر
+*/
+
+function copyNewsLink() {
+
+    navigator.clipboard.writeText(
+        window.location.href
+    );
+
+    alert("✅ لینک خبر کپی شد!");
+
+}
+
+</script>
+
+</body>
+</html>
