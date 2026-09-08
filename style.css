@@ -601,16 +601,34 @@ a {
     }
 
     .nav {
-        order: 3;
-        width: 100%;
-        overflow-x: auto;
-        padding-bottom: 3px;
-    }
+    order: 3;
+    width: 100%;
+    display: flex;
+    gap: 8px;
 
-    .nav-btn {
-        white-space: nowrap;
-    }
+    overflow-x: auto;
+    overflow-y: hidden;
 
+    padding: 5px 2px 8px;
+
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.nav::-webkit-scrollbar {
+    display: none;
+}
+
+.nav-btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+
+    padding: 10px 16px;
+    min-height: 42px;
+
+    font-size: 14px;
+    border-radius: 12px;
+}
     .hero-section {
         grid-template-columns: 1fr;
     }
