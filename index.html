@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>امیرنیوز | آخرین اخبار</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+<header class="header">
+    <div class="container header-inner">
+
+        <a class="logo" href="index.html">
+            <span class="logo-mark">ا</span>
+            <span>
+                <strong>امیرنیوز</strong>
+                <small>نبض خبر، همین‌جا</small>
+            </span>
+        </a>
+
+        <nav class="nav">
+            <button data-category="همه" class="nav-btn active">همه</button>
+            <button data-category="ایران" class="nav-btn">ایران</button>
+            <button data-category="جهان" class="nav-btn">جهان</button>
+            <button data-category="فناوری" class="nav-btn">فناوری</button>
+            <button data-category="اقتصاد" class="nav-btn">اقتصاد</button>
+            <button data-category="تاریخ" class="nav-btn">تاریخ</button>
+            <button data-category="ورزش" class="nav-btn">ورزش</button>
+        </nav>
+
+        <div class="header-actions">
+            <button id="themeBtn" class="icon-btn" aria-label="حالت تاریک">🌙</button>
+            <button id="searchBtn" class="icon-btn" aria-label="جستجو">⌕</button>
+        </div>
+
+    </div>
+</header>
+
+<section class="breaking">
+    <div class="container breaking-inner">
+        <span class="breaking-label">🔴 خبر فوری</span>
+        <div id="breakingText">در حال دریافت آخرین اخبار...</div>
+    </div>
+</section>
+
+<main class="container">
+
+    <section class="hero-section">
+
+        <div id="heroNews" class="hero-card">
+            <div class="loading">در حال دریافت خبرها...</div>
+        </div>
+
+        <div class="side-news" id="sideNews"></div>
+
+    </section>
+
+    <section class="latest-section">
+
+        <div class="section-heading">
+            <div>
+                <span class="section-tag">تازه‌ها</span>
+                <h2>آخرین اخبار</h2>
+            </div>
+
+            <div class="search-box">
+                <input id="searchInput" type="text" placeholder="جستجوی خبر...">
+            </div>
+        </div>
+
+        <div id="newsGrid" class="news-grid"></div>
+
+        <div id="emptyState" class="empty-state hidden">
+            <div>🔎</div>
+            <h3>خبری پیدا نشد</h3>
+            <p>عبارت جستجو یا دسته‌بندی دیگری را امتحان کن.</p>
+        </div>
+
+    </section>
+
+</main>
+
+<footer class="footer">
+    <div class="container footer-inner">
+
+        <div>
+            <div class="footer-logo">امیرنیوز</div>
+            <p>خبرها را سریع، ساده و خواندنی دنبال کن.</p>
+        </div>
+
+        <div class="footer-links">
+            <a href="#">درباره ما</a>
+            <a href="#">تماس با ما</a>
+        </div>
+
+    </div>
+
+    <div class="copyright">
+        © ۱۴۰۵ امیرنیوز — تمامی حقوق محفوظ است.
+    </div>
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
