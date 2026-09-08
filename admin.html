@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>پنل مدیریت | امیرنیوز</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body class="admin-page">
+
+<div class="admin-wrapper">
+
+    <div id="loginBox" class="admin-card">
+
+        <div class="admin-logo">ا</div>
+
+        <h1>ورود به مدیریت</h1>
+        <p>پنل مدیریت امیرنیوز</p>
+
+        <form id="loginForm">
+
+            <label>ایمیل</label>
+            <input id="email" type="email" required placeholder="ایمیل ادمین">
+
+            <label>رمز عبور</label>
+            <input id="password" type="password" required placeholder="رمز عبور">
+
+            <button class="primary-btn" type="submit">
+                ورود به پنل
+            </button>
+
+            <div id="loginMessage" class="form-message"></div>
+
+        </form>
+
+    </div>
+
+
+    <div id="dashboard" class="dashboard hidden">
+
+        <header class="admin-header">
+
+            <div>
+                <span class="section-tag">مدیریت</span>
+                <h1>پنل امیرنیوز</h1>
+            </div>
+
+            <div class="admin-header-buttons">
+                <a href="index.html" class="secondary-btn">مشاهده سایت</a>
+                <button id="logoutBtn" class="danger-outline">خروج</button>
+            </div>
+
+        </header>
+
+
+        <section class="admin-card">
+
+            <div class="admin-title-row">
+                <div>
+                    <h2 id="formTitle">افزودن خبر جدید</h2>
+                    <p>خبر جدید را وارد و منتشر کن.</p>
+                </div>
+            </div>
+
+            <form id="newsForm">
+
+                <input id="newsId" type="hidden">
+
+                <label>عنوان خبر</label>
+                <input id="newsTitle" type="text" required placeholder="عنوان خبر">
+
+                <label>دسته‌بندی</label>
+
+                <select id="newsCategory" required>
+                    <option value="ایران">ایران</option>
+                    <option value="جهان">جهان</option>
+                    <option value="فناوری">فناوری</option>
+                    <option value="اقتصاد">اقتصاد</option>
+                    <option value="تاریخ">تاریخ</option>
+                    <option value="ورزش">ورزش</option>
+                </select>
+
+                <label>متن خبر</label>
+                <textarea id="newsContent" rows="9" required placeholder="متن کامل خبر..."></textarea>
+
+                <label>لینک تصویر</label>
+                <input id="newsImage" type="url" placeholder="https://example.com/image.jpg">
+
+                <div class="form-actions">
+
+                    <button class="primary-btn" type="submit">
+                        🚀 انتشار خبر
+                    </button>
+
+                    <button id="cancelEdit" class="secondary-btn hidden" type="button">
+                        لغو ویرایش
+                    </button>
+
+                </div>
+
+                <div id="newsMessage" class="form-message"></div>
+
+            </form>
+
+        </section>
+
+
+        <section class="admin-card">
+
+            <div class="admin-title-row">
+                <div>
+                    <h2>خبرهای منتشرشده</h2>
+                    <p>خبرهای سایت را مدیریت کن.</p>
+                </div>
+            </div>
+
+            <div id="adminNewsList" class="admin-news-list">
+                در حال دریافت خبرها...
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
