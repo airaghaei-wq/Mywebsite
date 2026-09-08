@@ -881,14 +881,18 @@ a {
     max-width: 850px;
     width: 100%;
     margin: auto;
+
     font-size: 19px;
     line-height: 2.25;
+
     color: var(--text);
 
     white-space: pre-line;
 
     overflow-wrap: anywhere;
     word-break: break-word;
+
+    text-align: right;
 }
 
 
